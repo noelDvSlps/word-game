@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 import GameScreen from "./screens/GameScreen";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useState } from "react";
@@ -8,17 +8,31 @@ import "expo-dev-client";
 
 import {
   RewardedAd,
+  RewardedInterstitialAd,
   RewardedAdEventType,
   TestIds,
 } from "react-native-google-mobile-ads";
 
-const adUnitId = __DEV__
-  ? TestIds.REWARDED
-  : "ca-app-pub-xxxxxxxxxxxxx/yyyyyyyyyyyyyy";
+const rules = `Each guess must be a valid five-letter word.
+\nThe color of a tile will change to show you how close your guess was.
+\nIf the tile turns green, the letter is in the word, and it is in the correct spot.
+\nIf the tile turns yellow, the letter is in the word, but it is not in the correct spot.
+\nIf the tile turns gray, the letter is not in the word.
+\nYOU HAVE UNLIMITED TRIES.
+`;
 
-const rewarded = RewardedAd.createForAdRequest(adUnitId, {
-  keywords: ["fashion", "clothing"],
-});
+const title = "WORDS UNLIMITED";
+
+const adUnitIdInterstitial = __DEV__
+  ? TestIds.REWARDED_INTERSTITIAL
+  : "ca-app-pub-4795904642663569/7269323497";
+
+const rewardedInterstitial = RewardedInterstitialAd.createForAdRequest(
+  adUnitIdInterstitial,
+  {
+    requestNonPersonalizedAdsOnly: true,
+  }
+);
 
 export default function App() {
   let words = require("an-array-of-english-words");
@@ -27,27 +41,28 @@ export default function App() {
   const [isGameOver, setIsGameOver] = useState(true);
   const [wordToGuess, setWordToGuess] = useState("");
   const [guessWords, setGuessWords] = useState([]);
+
   let screen;
 
   const [loaded, setLoaded] = useState(false);
 
   const reloadAd = () => {
-    rewarded.removeAllListeners();
-    const unsubscribeLoaded = rewarded.addAdEventListener(
+    rewardedInterstitial.removeAllListeners();
+    const unsubscribeLoaded = rewardedInterstitial.addAdEventListener(
       RewardedAdEventType.LOADED,
       () => {
         setLoaded(true);
       }
     );
-    const unsubscribeEarned = rewarded.addAdEventListener(
+    const unsubscribeEarned = rewardedInterstitial.addAdEventListener(
       RewardedAdEventType.EARNED_REWARD,
       (reward) => {
         console.log("User earned reward of ", reward);
       }
     );
 
-    // Start loading the rewarded ad straight away
-    rewarded.load();
+    // Start loading the rewarded interstitial ad straight away
+    rewardedInterstitial.load();
 
     // Unsubscribe from events on unmount
     return () => {
@@ -78,6 +93,8 @@ export default function App() {
         setIsGameOver={setIsGameOver}
         words={words}
         startGame={startGame}
+        rules={rules}
+        title={title}
       />
     );
   }
@@ -91,6 +108,7 @@ export default function App() {
         wordToGuess={wordToGuess}
         words={words}
         reloadAd={reloadAd}
+        rules={rules}
       />
     );
   }
@@ -101,7 +119,7 @@ export default function App() {
         setIsGameOver={setIsGameOver}
         startGame={startGame}
         guessWords={guessWords}
-        rewarded={rewarded}
+        rewarded={rewardedInterstitial}
         reloadAd={reloadAd}
         isAdAvailable={isAdAvailable}
       />

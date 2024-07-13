@@ -2,6 +2,7 @@ import { StyleSheet, Text, View } from "react-native";
 import PrimaryButton from "../components/PrimaryButton";
 import WordOutput from "../components/WordOutput";
 import Entypo from "@expo/vector-icons/Entypo";
+import { useEffect, useState } from "react";
 
 export default function GameOverScreen({
   startGame,
@@ -9,7 +10,24 @@ export default function GameOverScreen({
   rewarded,
   isAdAvailable,
 }) {
-  console.log(guessWords[0]);
+  const [meaning, setMeaning] = useState("");
+  useEffect(() => {
+    fetch(
+      `https://api.dictionaryapi.dev/api/v2/entries/en/${
+        guessWords[guessWords.length - 1].word
+      }`
+    )
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        setMeaning(
+          data.message
+            ? "Trust me, it is a word, google it!"
+            : data[0].meanings[0].definitions[0].definition
+        );
+      });
+  }, []);
   const onHandlePressRestart = () => {
     const ok = isAdAvailable();
 
@@ -27,34 +45,51 @@ export default function GameOverScreen({
     }, 600);
   };
   return (
-    <View style={styles.inputContainer}>
-      <WordOutput
-        word={guessWords[guessWords.length - 1]}
-        wordToGuess={guessWords[guessWords.length - 1].word}
-      />
-      <Text style={{ color: "white" }}>
-        YOU GUESSED IT RIGHT AT {guessWords.length} TRIES!! GAME OVER{" "}
-      </Text>
-      <View style={styles.buttonsContainer}>
-        <View style={styles.buttonContainer}>
-          <PrimaryButton onHandlePress={onHandlePressRestart} param={null}>
-            Restart{" "}
-            {isAdAvailable && <Entypo name="video" size={24} color="purple" />}
-          </PrimaryButton>
+    <View style={styles.mainContainer}>
+      <View style={styles.inputContainer}>
+        <View style={styles.wordContainer}>
+          <WordOutput
+            word={guessWords[guessWords.length - 1]}
+            wordToGuess={guessWords[guessWords.length - 1].word}
+          />
         </View>
-        {/* <View style={styles.buttonContainer}>
+        <View style={styles.textContainer}>
+          <Text style={styles.text}>{meaning}</Text>
+        </View>
+        <View style={styles.textContainer}>
+          <Text style={styles.text}>
+            YOU GUESSED IT RIGHT AT {guessWords.length} TRIES!!
+          </Text>
+        </View>
+
+        <View style={styles.buttonsContainer}>
+          <View style={styles.buttonContainer}>
+            <PrimaryButton onHandlePress={onHandlePressRestart} param={null}>
+              Restart{" "}
+              {isAdAvailable && (
+                <Entypo name="video" size={24} color="purple" />
+              )}
+            </PrimaryButton>
+          </View>
+          {/* <View style={styles.buttonContainer}>
           <PrimaryButton onHandlePress={() => alert("Unable to Close")}>
             QUIT
           </PrimaryButton>
         </View> */}
+        </View>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  mainContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   inputContainer: {
-    flex: 0.25,
+    flex: 0.5,
     justifyContent: "center",
     alignItems: "center",
     marginTop: 100,
@@ -62,6 +97,21 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: "#3b021f",
     borderRadius: 8,
+  },
+  wordContainer: {
+    flex: 0.25,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  textContainer: {
+    flex: 0.25,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  text: {
+    textAlign: "center",
+    color: "white",
   },
 
   buttonsContainer: {

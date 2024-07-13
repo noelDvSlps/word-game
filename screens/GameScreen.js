@@ -1,4 +1,4 @@
-import { FlatList, Platform, StyleSheet, View } from "react-native";
+import { FlatList, Platform, StyleSheet, Text, View } from "react-native";
 import WordInput from "../components/WordInput";
 import PrimaryButton from "../components/PrimaryButton";
 import { useRef, useState } from "react";
@@ -18,8 +18,19 @@ export default function GameScreen({
   setGuessWords,
   words,
   reloadAd,
+  rules,
 }) {
   const [newWord, setNewWord] = useState("");
+
+  let rl = [];
+  let wl = [];
+
+  function addRightLetter(letter) {
+    rl.push(letter);
+  }
+  function addWrongLetter(letter) {
+    wl.push(letter);
+  }
 
   const flatList = useRef(null);
 
@@ -52,6 +63,8 @@ export default function GameScreen({
 
     if (newWord.trim() === wordToGuess) {
       reloadAd();
+      rl = [];
+      wl = [];
       setIsGameOver(true);
     }
 
@@ -60,8 +73,6 @@ export default function GameScreen({
 
   const adUnitIdBanner = __DEV__
     ? TestIds.BANNER
-    : Platform.OS === "ios"
-    ? "ca-app-pub-4795904642663569/5656024778"
     : "ca-app-pub-4795904642663569/5656024778";
 
   function setCharAt(str, letterPosition, chr) {
@@ -88,19 +99,34 @@ export default function GameScreen({
 
   return (
     <View style={styles.appContainer}>
-      <View style={styles.wordsContainer}>
-        <FlatList
-          ref={flatList}
-          onContentSizeChange={() => {
-            flatList.current.scrollToEnd();
-          }}
-          data={guessWords}
-          renderItem={(itemData) => {
-            return (
-              <WordOutput word={itemData.item} wordToGuess={wordToGuess} />
-            );
-          }}
-        />
+      <View
+        style={[styles.wordsContainer, { flexDirection: "column-reverse" }]}
+      >
+        {guessWords.length ? (
+          <View
+            style={{
+              flex: 0.2 * guessWords.length > 1 ? 1 : 0.2 * guessWords.length,
+            }}
+          >
+            <FlatList
+              ref={flatList}
+              onContentSizeChange={() => {
+                flatList.current.scrollToEnd();
+              }}
+              data={guessWords}
+              renderItem={(itemData) => {
+                return (
+                  <WordOutput word={itemData.item} wordToGuess={wordToGuess} />
+                );
+              }}
+            />
+          </View>
+        ) : (
+          <>
+            <Text style={{ textAlign: "center" }}>{rules}</Text>
+            <Text style={{ textAlign: "center" }}>Start Typing!</Text>
+          </>
+        )}
       </View>
 
       <View style={styles.inputContainer}>
@@ -108,7 +134,16 @@ export default function GameScreen({
       </View>
 
       <View style={styles.keyboardContainer}>
-        <Keyboard setNewWord={setNewWord} newWord={newWord}></Keyboard>
+        <Keyboard
+          setNewWord={setNewWord}
+          newWord={newWord}
+          wordToGuess={wordToGuess}
+          guessWords={guessWords}
+          rightLetters={rl}
+          wrongLetters={wl}
+          addWrongLetter={addWrongLetter}
+          addRightLetter={addRightLetter}
+        ></Keyboard>
       </View>
       <View style={styles.buttonContainer}>
         <PrimaryButton
@@ -121,11 +156,7 @@ export default function GameScreen({
               : false
           }
         >
-          {isWord(newWord) === false
-            ? "Not A Word"
-            : isWord(newWord) === true
-            ? "SUBMIT"
-            : "press more key(s)"}
+          {isWord(newWord) === false ? "Not A Word" : "SUBMIT"}
         </PrimaryButton>
       </View>
       <View style={styles.bannerAdContainer}>
@@ -147,7 +178,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   wordsContainer: {
-    flex: 1.5,
+    flex: 2,
     alignItems: "center",
     borderColor: "gray",
     // borderWidth: 1,
