@@ -1,9 +1,27 @@
-import { Button, FlatList, StyleSheet, Text, View } from "react-native";
+import {
+  Button,
+  FlatList,
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import WordInput from "../components/WordInput";
 import PrimaryButton from "../components/PrimaryButton";
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import WordOutput from "../components/WordOutput";
 import Keyboard from "../components/Keyboard";
+
+import {
+  InterstitialAd,
+  BannerAd,
+  BannerAdSize,
+  RewardedAd,
+  RewardedAdEventType,
+  TestIds,
+  AdEventType,
+  RewardedInterstitialAd,
+} from "react-native-google-mobile-ads";
 
 export default function GameScreen({
   setIsGameOver,
@@ -12,7 +30,21 @@ export default function GameScreen({
   setGuessWords,
   words,
 }) {
+  const [loaded, setLoaded] = useState(false);
+
+  const adUnitId = __DEV__
+    ? TestIds.REWARDED
+    : Platform.OS === "ios"
+    ? "ca-app-pub-4795904642663569/3798689291"
+    : "ca-app-pub-4795904642663569/4308127667";
+
+  const rewarded = RewardedAd.createForAdRequest(adUnitId, {
+    requestNonPersonalizedAdsOnly: true,
+  });
+
   const [newWord, setNewWord] = useState("");
+
+  const [loadedInterstitial, setLoadedInterstitial] = useState(false);
 
   const flatList = useRef(null);
 
@@ -50,6 +82,69 @@ export default function GameScreen({
     setNewWord("");
   };
 
+  const adUnitIdBanner = __DEV__
+    ? TestIds.BANNER
+    : Platform.OS === "ios"
+    ? "ca-app-pub-4795904642663569/5656024778"
+    : "ca-app-pub-4795904642663569/5656024778";
+
+  const adUnitIdInterstitial = __DEV__
+    ? TestIds.INTERSTITIAL
+    : Platform.OS === "ios"
+    ? ""
+    : "";
+
+  const interstitial = InterstitialAd.createForAdRequest(adUnitIdInterstitial, {
+    requestNonPersonalizedAdsOnly: true,
+  });
+
+  const loadRewardedAd = () => {
+    alert("loadRewardedAd");
+    rewarded.removeAllListeners();
+    const unsubscribeLoaded = rewarded.addAdEventListener(
+      RewardedAdEventType.LOADED,
+      () => {
+        setLoaded(true);
+      }
+    );
+    const unsubscribeEarned = rewarded.addAdEventListener(
+      RewardedAdEventType.EARNED_REWARD,
+      (reward) => {
+        console.log("User earned reward of ", reward);
+      }
+    );
+
+    // Start loading the rewarded ad straight away
+    rewarded.load();
+
+    // Unsubscribe from events on unmount
+    return () => {
+      unsubscribeLoaded();
+      unsubscribeEarned();
+    };
+  };
+
+  const loadInterstitial = () => {
+    interstitial.removeAllListeners();
+    const unsubscribeLoaded = interstitial.addAdEventListener(
+      AdEventType.LOADED,
+      () => {
+        setLoadedInterstitial(true);
+      }
+    );
+    const unsubscribeClosed = interstitial.addAdEventListener(
+      AdEventType.CLOSED,
+      () => {
+        setLoadedInterstitial(false);
+        interstitial.load();
+      }
+    );
+    interstitial.load();
+    return () => {
+      unsubscribeClosed();
+      unsubscribeLoaded();
+    };
+  };
   function setCharAt(str, letterPosition, chr) {
     let newValue = str;
     if (letterPosition > str.length - 1) return str;
@@ -72,6 +167,76 @@ export default function GameScreen({
     setNewWord(newValue);
   };
 
+  useEffect(() => {
+    const unsubscribeLoaded = rewarded.addAdEventListener(
+      RewardedAdEventType.LOADED,
+      () => {
+        setLoaded(true);
+      }
+    );
+    const unsubscribeEarned = rewarded.addAdEventListener(
+      RewardedAdEventType.EARNED_REWARD,
+      (reward) => {
+        console.log("User earned reward of ", reward);
+      }
+    );
+
+    // Start loading the rewarded ad straight away
+    rewarded.load();
+
+    // Unsubscribe from events on unmount
+    return () => {
+      unsubscribeLoaded();
+      unsubscribeEarned();
+    };
+  }, []);
+
+  const callBackLoadRewardedAd = useCallback(() => {
+    alert(loaded);
+    setTimeout(() => {
+      loaded !== true && loadRewardedAd();
+    }, 5000);
+  }, [loaded]);
+
+  // Temporary remove Interstitial
+  useEffect(() => {
+    callBackLoadInterstitial();
+  }, [loadedInterstitial]);
+
+  useEffect(() => {
+    const unsubscribeInterstitialEvents = loadInterstitial();
+    return unsubscribeInterstitialEvents;
+  }, []);
+
+  const callBackLoadInterstitial = useCallback(() => {
+    setTimeout(() => {
+      loadedInterstitial !== true && loadInterstitial();
+    }, 5000);
+  }, [loadedInterstitial]);
+
+  const showInterstitial = () => {
+    try {
+      interstitial.show();
+    } catch (error) {
+      return loadInterstitial();
+    }
+  };
+
+  const showAd = () => {
+    alert(loaded);
+    if (loaded) {
+      try {
+        rewarded.show();
+        setLoaded(false);
+      } catch {
+        setLoaded(false);
+        loadRewardedAd();
+      }
+    } else {
+      loadRewardedAd();
+    }
+  };
+
   return (
     <View style={styles.appContainer}>
       <View style={styles.wordsContainer}>
@@ -88,6 +253,12 @@ export default function GameScreen({
           }}
         />
       </View>
+      <Button
+        onPress={() => {
+          showAd();
+        }}
+        title="ad"
+      ></Button>
       <View style={styles.inputContainer}>
         <WordInput newWord={newWord} onChangeInput={onChangeInput} />
       </View>
@@ -113,6 +284,11 @@ export default function GameScreen({
             : "press more key(s)"}
         </PrimaryButton>
       </View>
+      <BannerAd
+        unitId={adUnitIdBanner}
+        size={BannerAdSize.BANNER}
+        requestOptions={{ requestNonPersonalizedAdsOnly: true }}
+      ></BannerAd>
     </View>
   );
 }
