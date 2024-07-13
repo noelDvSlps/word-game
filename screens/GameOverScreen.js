@@ -1,11 +1,30 @@
 import { StyleSheet, Text, View } from "react-native";
 import PrimaryButton from "../components/PrimaryButton";
 import WordOutput from "../components/WordOutput";
+import Entypo from "@expo/vector-icons/Entypo";
 
-export default function GameOverScreen({ startGame, guessWords }) {
+export default function GameOverScreen({
+  startGame,
+  guessWords,
+  rewarded,
+  isAdAvailable,
+}) {
   console.log(guessWords[0]);
   const onHandlePressRestart = () => {
-    startGame();
+    const ok = isAdAvailable();
+
+    if (ok) {
+      setTimeout(() => {
+        try {
+          rewarded.show();
+        } catch (error) {
+          alert("ad error");
+        }
+      }, 300);
+    }
+    setTimeout(() => {
+      startGame();
+    }, 600);
   };
   return (
     <View style={styles.inputContainer}>
@@ -19,14 +38,15 @@ export default function GameOverScreen({ startGame, guessWords }) {
       <View style={styles.buttonsContainer}>
         <View style={styles.buttonContainer}>
           <PrimaryButton onHandlePress={onHandlePressRestart} param={null}>
-            Restart
+            Restart{" "}
+            {isAdAvailable && <Entypo name="video" size={24} color="purple" />}
           </PrimaryButton>
         </View>
-        <View style={styles.buttonContainer}>
+        {/* <View style={styles.buttonContainer}>
           <PrimaryButton onHandlePress={() => alert("Unable to Close")}>
             QUIT
           </PrimaryButton>
-        </View>
+        </View> */}
       </View>
     </View>
   );

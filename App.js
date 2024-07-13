@@ -1,10 +1,24 @@
 import { StyleSheet, View } from "react-native";
 import GameScreen from "./screens/GameScreen";
 import { LinearGradient } from "expo-linear-gradient";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import StartGameScreen from "./screens/StartGameScreen";
 import GameOverScreen from "./screens/GameOverScreen";
 import "expo-dev-client";
+
+import {
+  RewardedAd,
+  RewardedAdEventType,
+  TestIds,
+} from "react-native-google-mobile-ads";
+
+const adUnitId = __DEV__
+  ? TestIds.REWARDED
+  : "ca-app-pub-xxxxxxxxxxxxx/yyyyyyyyyyyyyy";
+
+const rewarded = RewardedAd.createForAdRequest(adUnitId, {
+  keywords: ["fashion", "clothing"],
+});
 
 export default function App() {
   let words = require("an-array-of-english-words");
@@ -14,6 +28,41 @@ export default function App() {
   const [wordToGuess, setWordToGuess] = useState("");
   const [guessWords, setGuessWords] = useState([]);
   let screen;
+
+  const [loaded, setLoaded] = useState(false);
+
+  const reloadAd = () => {
+    rewarded.removeAllListeners();
+    const unsubscribeLoaded = rewarded.addAdEventListener(
+      RewardedAdEventType.LOADED,
+      () => {
+        setLoaded(true);
+      }
+    );
+    const unsubscribeEarned = rewarded.addAdEventListener(
+      RewardedAdEventType.EARNED_REWARD,
+      (reward) => {
+        console.log("User earned reward of ", reward);
+      }
+    );
+
+    // Start loading the rewarded ad straight away
+    rewarded.load();
+
+    // Unsubscribe from events on unmount
+    return () => {
+      unsubscribeLoaded();
+      unsubscribeEarned();
+    };
+  };
+
+  const isAdAvailable = () => {
+    return loaded;
+  };
+
+  // useEffect(() => {
+  //   reloadAd();
+  // }, []);
 
   const startGame = () => {
     const randomWords = words[Math.floor(Math.random() * words.length)];
@@ -41,6 +90,7 @@ export default function App() {
         setIsGameOver={setIsGameOver}
         wordToGuess={wordToGuess}
         words={words}
+        reloadAd={reloadAd}
       />
     );
   }
@@ -51,6 +101,9 @@ export default function App() {
         setIsGameOver={setIsGameOver}
         startGame={startGame}
         guessWords={guessWords}
+        rewarded={rewarded}
+        reloadAd={reloadAd}
+        isAdAvailable={isAdAvailable}
       />
     );
   }
