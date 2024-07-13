@@ -25,6 +25,8 @@ const title = "WORDS UNLIMITED";
 
 const adUnitIdInterstitial = __DEV__
   ? TestIds.REWARDED_INTERSTITIAL
+  : Platform.OS === "ios"
+  ? "ca-app-pub-4795904642663569/5536868603"
   : "ca-app-pub-4795904642663569/7269323497";
 
 const rewardedInterstitial = RewardedInterstitialAd.createForAdRequest(

@@ -12,9 +12,12 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "buildNumber": "1.0.0",
+      "bundleIdentifier": "com.simplec0der.WordGame"
     },
     "android": {
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -32,6 +35,6 @@
   },
   "react-native-google-mobile-ads": {
     "android_app_id": "ca-app-pub-4795904642663569~1559994951",
-    "ios_app_id": "ca-app-pub-4795904642663569~1559994951"
+    "ios_app_id": "ca-app-pub-4795904642663569~3750102070"
   }
 }

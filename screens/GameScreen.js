@@ -73,6 +73,8 @@ export default function GameScreen({
 
   const adUnitIdBanner = __DEV__
     ? TestIds.BANNER
+    : Platform.OS === "ios"
+    ? "ca-app-pub-4795904642663569/6423532723"
     : "ca-app-pub-4795904642663569/5656024778";
 
   function setCharAt(str, letterPosition, chr) {
@@ -123,8 +125,8 @@ export default function GameScreen({
           </View>
         ) : (
           <>
-            <Text style={{ textAlign: "center" }}>{rules}</Text>
             <Text style={{ textAlign: "center" }}>Start Typing!</Text>
+            <Text style={{ textAlign: "center" }}>{rules}</Text>
           </>
         )}
       </View>
