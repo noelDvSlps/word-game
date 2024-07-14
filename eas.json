@@ -15,6 +15,12 @@
     "production": {}
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios": {
+        "appleId": "noel.a.pulido@gmail.com",
+        "ascAppId": "6541759773",
+        "appleTeamId": "76T33TLH5N"
+      }
+    }
   }
 }
