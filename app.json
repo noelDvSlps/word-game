@@ -14,12 +14,7 @@
     "ios": {
       "supportsTablet": true,
       "buildNumber": "1.0.0",
-      "bundleIdentifier": "com.simplec0der.WordGame",
-      "infoPlist": {
-        "react-native-google-mobile-ads": {
-          "ios_app_id": "ca-app-pub-4795904642663569~3750102070"
-        }
-      }
+      "bundleIdentifier": "com.simplec0der.WordGame"
     },
     "android": {
       "versionCode": 1,
@@ -32,6 +27,16 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ]
+    ],
     "extra": {
       "eas": {
         "projectId": "e6b49494-c80b-436c-ad3d-657f50024a18"
@@ -39,6 +44,7 @@
     }
   },
   "react-native-google-mobile-ads": {
-    "android_app_id": "ca-app-pub-4795904642663569~1559994951"
+    "android_app_id": "ca-app-pub-4795904642663569~1559994951",
+    "ios_app_id": "ca-app-pub-4795904642663569~3750102070"
   }
 }
