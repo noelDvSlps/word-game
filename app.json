@@ -35,20 +35,19 @@
             "useFrameworks": "static"
           }
         }
+      ],
+      [
+        "react-native-google-mobile-ads",
+        {
+          "iosAppId": "ca-app-pub-4795904642663569~3750102070",
+          "androidAppId": "ca-app-pub-4795904642663569~1559994951"
+        }
       ]
     ],
     "extra": {
       "eas": {
         "projectId": "e6b49494-c80b-436c-ad3d-657f50024a18"
       }
-    },
-    "react-native-google-mobile-ads": {
-      "android_app_id": "ca-app-pub-4795904642663569~1559994951",
-      "ios_app_id": "ca-app-pub-4795904642663569~3750102070"
     }
-  },
-  "react-native-google-mobile-ads": {
-    "android_app_id": "ca-app-pub-4795904642663569~1559994951",
-    "ios_app_id": "ca-app-pub-4795904642663569~3750102070"
   }
 }
