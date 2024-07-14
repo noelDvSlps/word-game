@@ -8,11 +8,13 @@ function StartGameScreen({ startGame, rules, title }) {
 
   return (
     <View style={styles.inputContainer}>
-      <View>
-        <Text style={{ color: "white" }}>{title}</Text>
+      <View style={{ marginBottom: 20 }}>
+        <Text style={{ color: "white", fontSize: 20 }}>{title}</Text>
       </View>
       <View>
-        <Text style={{ color: "white" }}>{rules}</Text>
+        <Text style={{ color: "white", fontSize: 16, textAlign: "center" }}>
+          {rules}
+        </Text>
       </View>
       <View style={styles.buttonsContainer}>
         <View style={styles.buttonContainer}>
@@ -37,7 +39,7 @@ const styles = StyleSheet.create({
     marginTop: 100,
     marginHorizontal: 24,
     padding: 16,
-    backgroundColor: "#3b021f",
+    backgroundColor: "#777876",
     borderRadius: 8,
   },
 

@@ -36,7 +36,7 @@ export default function GameOverScreen({
         try {
           rewarded.show();
         } catch (error) {
-          alert("ad error");
+          console.log("skips ad");
         }
       }, 300);
     }
@@ -66,9 +66,7 @@ export default function GameOverScreen({
           <View style={styles.buttonContainer}>
             <PrimaryButton onHandlePress={onHandlePressRestart} param={null}>
               Restart{" "}
-              {isAdAvailable && (
-                <Entypo name="video" size={24} color="purple" />
-              )}
+              {isAdAvailable && <Entypo name="video" size={24} color="gray" />}
             </PrimaryButton>
           </View>
           {/* <View style={styles.buttonContainer}>
@@ -95,7 +93,7 @@ const styles = StyleSheet.create({
     marginTop: 100,
     marginHorizontal: 24,
     padding: 16,
-    backgroundColor: "#3b021f",
+    backgroundColor: "#777876",
     borderRadius: 8,
   },
   wordContainer: {

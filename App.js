@@ -59,7 +59,7 @@ export default function App() {
     const unsubscribeEarned = rewardedInterstitial.addAdEventListener(
       RewardedAdEventType.EARNED_REWARD,
       (reward) => {
-        console.log("User earned reward of ", reward);
+        // console.log("User earned reward of ", reward);
       }
     );
 
@@ -77,14 +77,9 @@ export default function App() {
     return loaded;
   };
 
-  // useEffect(() => {
-  //   reloadAd();
-  // }, []);
-
   const startGame = () => {
     const randomWords = words[Math.floor(Math.random() * words.length)];
     setWordToGuess(randomWords.toUpperCase());
-    console.log(randomWords);
     setIsGameOver(false);
     setGuessWords([]);
   };

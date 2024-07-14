@@ -2,7 +2,6 @@ import { useRef, useState } from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
 export default function WordInput({ newWord, onChangeInput }) {
   let lettersArray = [...newWord, ..." ".repeat(5 - newWord.length)];
-  console.log(lettersArray);
 
   function InputHandler(enteredText, i) {
     onChangeInput(newWord, i, enteredText === "" ? " " : enteredText);
@@ -50,7 +49,8 @@ const styles = StyleSheet.create({
     margin: 5,
     padding: 10,
     borderRadius: 8,
-    borderWidth: 2,
-    borderColor: "white",
+    // borderWidth: 2,
+    // borderColor: "white",
+    backgroundColor: "#697171",
   },
 });

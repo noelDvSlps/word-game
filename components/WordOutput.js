@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 
 export default function WordOutput({ word, wordToGuess }) {
-  console.log(wordToGuess);
+  // console.log(wordToGuess);
   let rightCharIndexes = [];
   let wrongCharIndexes = [];
   let wrongPositionIndexes = [];
