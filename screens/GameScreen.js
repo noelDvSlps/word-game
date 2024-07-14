@@ -4,12 +4,23 @@ import PrimaryButton from "../components/PrimaryButton";
 import { useRef, useState } from "react";
 import WordOutput from "../components/WordOutput";
 import Keyboard from "../components/Keyboard";
+import { Dimensions } from "react-native";
 
 import {
   BannerAd,
   BannerAdSize,
   TestIds,
 } from "react-native-google-mobile-ads";
+
+let windowWidth = Dimensions.get("window").width;
+let windowHeight = Dimensions.get("window").height;
+
+// windowWidth = 375;
+// windowHeight = 667;
+
+const breakPointSmall = { width: 385, height: 700 };
+const breakPointMedium = { width: 400, height: 1000 };
+const breakPointLarge = { width: 700, height: 1450 };
 
 export default function GameScreen({
   setIsGameOver,
@@ -102,13 +113,24 @@ export default function GameScreen({
   return (
     <View style={styles.appContainer}>
       <View
-        style={[styles.wordsContainer, { flexDirection: "column-reverse" }]}
+        style={[
+          styles.wordsContainer,
+          {
+            flexDirection: "column-reverse",
+            justifyContent: guessWords.length ? "flex-start" : "center",
+            alignItems: "center",
+          },
+        ]}
       >
         {guessWords.length ? (
           <View
-            style={{
-              flex: 0.2 * guessWords.length > 1 ? 1 : 0.2 * guessWords.length,
-            }}
+            style={[
+              {
+                padding: 0,
+                height: guessWords.length > 5 ? 300 : guessWords.length * 60,
+              },
+              styles.listContainer,
+            ]}
           >
             <FlatList
               ref={flatList}
@@ -125,8 +147,22 @@ export default function GameScreen({
           </View>
         ) : (
           <>
-            <Text style={{ textAlign: "center" }}>Start Typing!</Text>
-            <Text style={{ textAlign: "center" }}>{rules}</Text>
+            <Text
+              style={{
+                textAlign: "center",
+                fontSize: windowHeight <= breakPointSmall.height ? 15 : 17,
+              }}
+            >
+              Start Typing!
+            </Text>
+            <Text
+              style={{
+                textAlign: "center",
+                fontSize: windowHeight <= breakPointSmall.height ? 15 : 17,
+              }}
+            >
+              {rules}
+            </Text>
           </>
         )}
       </View>
@@ -145,6 +181,13 @@ export default function GameScreen({
           wrongLetters={wl}
           addWrongLetter={addWrongLetter}
           addRightLetter={addRightLetter}
+          keyWidth={
+            windowHeight <= breakPointSmall.height
+              ? 34
+              : windowHeight <= breakPointMedium.height
+              ? 37
+              : 50
+          }
         ></Keyboard>
       </View>
       <View style={styles.buttonContainer}>
@@ -174,42 +217,51 @@ export default function GameScreen({
 
 const styles = StyleSheet.create({
   appContainer: {
-    flex: 1,
-    paddingVertical: 50,
-    paddingTop: 100,
+    paddingVertical: windowHeight <= breakPointSmall.height ? 20 : 50,
     paddingHorizontal: 16,
+    maxHeight: windowHeight,
+    flex: 1,
+    height: windowHeight,
+    width: windowWidth,
   },
   wordsContainer: {
     flex: 2,
+    maxHeight:
+      windowHeight <= breakPointSmall.height
+        ? 240
+        : windowHeight <= breakPointMedium.height
+        ? 300
+        : 420,
     alignItems: "center",
-    borderColor: "gray",
-    // borderWidth: 1,
-    marginBottom: 40,
+    justifyContent: "flex-start",
+  },
+  listContainer: {
+    maxHeight:
+      windowHeight <= breakPointSmall.height
+        ? 240
+        : windowHeight <= breakPointMedium.height
+        ? 300
+        : 420,
   },
   inputContainer: {
-    flex: 0.25,
+    flex: 0.5,
     justifyContent: "center",
-
     alignItems: "center",
-    borderColor: "gray",
-    // borderWidth: 1,
-    marginBottom: 16,
+
+    margin: 20,
   },
 
   keyboardContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    borderColor: "gray",
-    // borderWidth: 1,
+
     marginBottom: 16,
   },
   buttonContainer: {
     flex: 0.5,
     justifyContent: "center",
     paddingHorizontal: 50,
-    borderColor: "gray",
-    // borderWidth: 1,
   },
   bannerAdContainer: {
     alignItems: "center",

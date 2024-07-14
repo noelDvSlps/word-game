@@ -7,7 +7,7 @@ function StartGameScreen({ startGame, rules, title }) {
   };
 
   return (
-    <View style={styles.inputContainer}>
+    <View style={styles.screenContainer}>
       <View style={{ marginBottom: 20 }}>
         <Text style={{ color: "white", fontSize: 20 }}>{title}</Text>
       </View>
@@ -33,7 +33,7 @@ function StartGameScreen({ startGame, rules, title }) {
 export default StartGameScreen;
 
 const styles = StyleSheet.create({
-  inputContainer: {
+  screenContainer: {
     justifyContent: "center",
     alignItems: "center",
     marginTop: 100,

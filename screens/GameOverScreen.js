@@ -87,7 +87,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   inputContainer: {
-    flex: 0.5,
     justifyContent: "center",
     alignItems: "center",
     marginTop: 100,
@@ -95,6 +94,7 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: "#777876",
     borderRadius: 8,
+    maxHeight: "80%",
   },
   wordContainer: {
     flex: 0.25,

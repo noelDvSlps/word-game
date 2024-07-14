@@ -76,8 +76,8 @@ const styles = StyleSheet.create({
     height: 50,
     width: 50,
     textAlign: "center",
-    margin: 5,
-    padding: 10,
     borderRadius: 8,
+    margin: 5,
+    textAlignVertical: "center",
   },
 });

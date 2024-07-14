@@ -14,12 +14,11 @@ import {
 } from "react-native-google-mobile-ads";
 
 const rules = `Each guess must be a valid five-letter word.
-\nThe color of a tile will change to show you how close your guess was.
-\nIf the tile turns green, the letter is in the word, and it is in the correct spot.
-\nIf the tile turns yellow, the letter is in the word, but it is not in the correct spot.
-\nIf the tile turns gray, the letter is not in the word.
-\nYOU HAVE UNLIMITED TRIES.
-`;
+The color of a tile will change to show you how close your guess was.
+If the tile turns green, the letter is in the word, and it is in the correct spot.
+If the tile turns yellow, the letter is in the word, but it is not in the correct spot.
+If the tile turns gray, the letter is not in the word.
+YOU HAVE UNLIMITED TRIES.`;
 
 const title = "WORDS UNLIMITED";
 

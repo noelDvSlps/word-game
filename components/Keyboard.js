@@ -15,6 +15,7 @@ export default function Keyboard({
   wrongLetters,
   addWrongLetter,
   addRightLetter,
+  keyWidth,
 }) {
   guessWords.map((item) => {
     const arrayLetters = [...item.word];
@@ -46,15 +47,14 @@ export default function Keyboard({
         key={index}
         style={({ pressed }) =>
           pressed
-            ? [styles.textContainer, styles.pressed]
-            : [styles.textContainer]
+            ? [styles.textContainer, styles.pressed, { width: keyWidth }]
+            : [styles.textContainer, { width: keyWidth }]
         }
         onPress={() => setNewWord(getNewWord(letter))}
       >
         <Text
           style={[
             styles.textContainer,
-
             rightLetters.indexOf(letter) >= 0
               ? {
                   backgroundColor: "#B1D481",
