@@ -71,6 +71,9 @@ export default function GameScreen({
       try {
         const s = await rewarded.show();
         showHint();
+        setTimeout(() => {
+          reloadAd();
+        }, 15000);
       } catch (error) {
         reloadAd();
         alert("Try again later");
