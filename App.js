@@ -47,18 +47,25 @@ export default function App() {
 
   const [loaded, setLoaded] = useState(false);
 
+  function getLoaded() {
+    return loaded;
+  }
+
   const reloadAd = () => {
     rewardedInterstitial.removeAllListeners();
     const unsubscribeLoaded = rewardedInterstitial.addAdEventListener(
       RewardedAdEventType.LOADED,
       () => {
         setLoaded(true);
+        return true;
       }
     );
     const unsubscribeEarned = rewardedInterstitial.addAdEventListener(
       RewardedAdEventType.EARNED_REWARD,
       (reward) => {
-        // console.log("User earned reward of ", reward);
+        console.log("User earned reward of ", reward);
+        setLoaded(false);
+        return reward;
       }
     );
 
@@ -103,8 +110,12 @@ export default function App() {
         setIsGameOver={setIsGameOver}
         wordToGuess={wordToGuess}
         words={words}
+        rewarded={rewardedInterstitial}
         reloadAd={reloadAd}
+        isAdAvailable={isAdAvailable}
         rules={rules}
+        setLoaded={setLoaded}
+        getLoaded={getLoaded}
       />
     );
   }

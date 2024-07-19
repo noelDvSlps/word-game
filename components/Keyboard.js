@@ -1,44 +1,53 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
-import { useEffect, useState } from "react";
+import deleteLetters from "../helper/helper";
 const row1 = ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"];
 const row2 = ["A", "S", "D", "F", "G", "H", "J", "K", "L"];
 const row3 = ["Z", "X", "C", "V", "B", "N", "M"];
-const textLength = 5;
 
 export default function Keyboard({
   setNewWord,
   newWord,
-  wordToGuess,
-  guessWords,
   rightLetters,
   wrongLetters,
-  addWrongLetter,
-  addRightLetter,
   keyWidth,
+  selectedBox,
+  setSelectedBox,
+  hintLetters,
+  setHintLetters,
 }) {
-  guessWords.map((item) => {
-    const arrayLetters = [...item.word];
-    arrayLetters.map((letter) => {
-      if (wordToGuess.indexOf(letter) >= 0) {
-        rightLetters.indexOf(letter) < 0 && addRightLetter(letter);
-      } else {
-        wrongLetters.indexOf(letter) < 0 && addWrongLetter(letter);
-      }
-    });
-  });
+  function arrayToWord(arrayOfLetters) {
+    let wordFromArray = "";
+    const arrayLength = arrayOfLetters.length;
+    for (let i = 0; i < arrayLength; i++) {
+      wordFromArray = wordFromArray + arrayOfLetters[i];
+    }
 
-  const [value, setValue] = useState("");
+    return wordFromArray;
+  }
+
   function getNewWord(letter) {
-    let textValue = newWord.length < textLength ? newWord + letter : value;
-    setValue(textValue);
-
+    const arrayNewWord = [...newWord];
+    arrayNewWord[selectedBox] = letter;
+    let textValue = arrayToWord(arrayNewWord);
     return textValue;
   }
 
+  function onHandlePressKey(key) {
+    selectedBox !== null && setNewWord(getNewWord(key));
+    setSelectedBox((previous) =>
+      previous + 1 > 4 || previous === null ? null : previous + 1
+    );
+    if (hintLetters.indexOf(key) >= 0) {
+      setHintLetters([...hintLetters.filter((letter) => letter !== key)]);
+    }
+  }
+
   function backspaceHandler() {
-    setValue(newWord.substring(0, value.length - 1));
-    return newWord.substring(0, value.length - 1);
+    const lastLetterIndex =
+      [...newWord].filter((letter) => letter !== " ").length - 1;
+    setNewWord(deleteLetters(lastLetterIndex, newWord));
+    lastLetterIndex >= 0 && setSelectedBox(lastLetterIndex);
   }
 
   function keyboardButton(letter, index) {
@@ -50,7 +59,7 @@ export default function Keyboard({
             ? [styles.textContainer, styles.pressed, { width: keyWidth }]
             : [styles.textContainer, { width: keyWidth }]
         }
-        onPress={() => setNewWord(getNewWord(letter))}
+        onPress={() => onHandlePressKey(letter)}
       >
         <Text
           style={[
@@ -59,6 +68,8 @@ export default function Keyboard({
               ? {
                   backgroundColor: "#B1D481",
                   color: "white",
+                  borderColor: hintLetters.indexOf(letter) >= 0 && "#F4CF52",
+                  borderWidth: hintLetters.indexOf(letter) >= 0 ? 2 : 0,
                 }
               : wrongLetters.indexOf(letter) >= 0
               ? {
@@ -76,37 +87,33 @@ export default function Keyboard({
 
   return (
     <View style={styles.keyboardContainer}>
-      <View style={styles.keyboardRow}>
-        {row1.map((letter, index) => {
-          return keyboardButton(letter, `row1-${index}`);
-        })}
-      </View>
-      <View style={styles.keyboardRow}>
-        {row2.map((letter, index) => {
-          return keyboardButton(letter, `row2-${index}`);
-        })}
-      </View>
-      <View style={styles.keyboardRow}>
-        {row3.map((letter, index) => {
-          return keyboardButton(letter, `row3-${index}`);
-        })}
-        <View style={[styles.textContainer, styles.backspaceContainer]}>
-          <Pressable
-            style={({ pressed }) =>
-              pressed
-                ? [
-                    styles.textContainer,
-                    styles.backspaceContainer,
-                    styles.pressed,
-                  ]
-                : [styles.textContainer, styles.backspaceContainer]
-            }
-            onPress={() => setNewWord(backspaceHandler())}
-          >
-            <FontAwesome5 name="backspace" size={20} color="gray" />
-          </Pressable>
-        </View>
-      </View>
+      {[row1, row2, row3].map((row, rowIndex) => {
+        return (
+          <View style={styles.keyboardRow} key={rowIndex}>
+            {row.map((letter, index) => {
+              return keyboardButton(letter, `row${rowIndex}-${index}`);
+            })}
+            {rowIndex === 2 && (
+              <View style={[styles.textContainer, styles.backspaceContainer]}>
+                <Pressable
+                  style={({ pressed }) =>
+                    pressed
+                      ? [
+                          styles.textContainer,
+                          styles.backspaceContainer,
+                          styles.pressed,
+                        ]
+                      : [styles.textContainer, styles.backspaceContainer]
+                  }
+                  onPress={backspaceHandler}
+                >
+                  <FontAwesome5 name="backspace" size={20} color="gray" />
+                </Pressable>
+              </View>
+            )}
+          </View>
+        );
+      })}
     </View>
   );
 }
