@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import StartGameScreen from "./screens/StartGameScreen";
 import GameOverScreen from "./screens/GameOverScreen";
 import "expo-dev-client";
+import data from "./data/Data.json";
 
 import {
   RewardedAd,
@@ -37,6 +38,7 @@ const rewardedInterstitial = RewardedInterstitialAd.createForAdRequest(
 
 export default function App() {
   let words = require("an-array-of-english-words");
+
   words = words.filter((word) => word.length === 5);
 
   const [isGameOver, setIsGameOver] = useState(true);
@@ -84,8 +86,9 @@ export default function App() {
   };
 
   const startGame = () => {
-    const randomWords = words[Math.floor(Math.random() * words.length)];
-    setWordToGuess(randomWords.toUpperCase());
+    // const randomWords = words[Math.floor(Math.random() * words.length)];
+    const randomWord = data[Math.floor(Math.random() * data.length)];
+    setWordToGuess(randomWord.toUpperCase());
     setIsGameOver(false);
     setGuessWords([]);
   };

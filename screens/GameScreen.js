@@ -42,6 +42,7 @@ export default function GameScreen({
   const [availableInputBoxes, setAvailableInputBoxes] = useState([
     0, 1, 2, 3, 4,
   ]);
+  console.log(wordToGuess);
 
   function showHint() {
     const hintLetters = [...new Set(wordToGuess)];
